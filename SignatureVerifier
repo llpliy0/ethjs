@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract SignatureVerifier {
+    // 签名验证函数
+    function verifySignature(bytes32 messageHash, bytes memory signature, address signer) public pure returns (bool) {
+        // 从签名中提取 v、r、s
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+        assembly {
+            r := mload(add(signature, 32))
+            s := mload(add(signature, 64))
+            v := byte(0, mload(add(signature, 96)))
+        }
+        // 使用 ecrecover 进行签名验证
+        return ecrecover(messageHash, v, r, s) == signer;
+    }
+}
